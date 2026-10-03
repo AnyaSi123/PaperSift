@@ -27,7 +27,7 @@ Standalone downloads need **no Python, Git, pip, or terminal**. Get the ZIP for 
 2. Extract it if necessary and move `PaperSift.app` to a convenient folder.
 3. Open `PaperSift.app`. Your default browser opens the local app.
 
-These student builds are not signed/notarized. Windows SmartScreen or macOS Gatekeeper may warn or block them. Only use a build whose source you trust; follow your operating system's normal security guidance. There is no signing or notarization service built into this project. A Mac build supports the architecture it was built for (Apple Silicon or Intel); test and label that before release.
+Note: PaperSift builds are not digitally signed. Windows or macOS may display a security warning when opening the application for the first time. PaperSift is open source, and the packaged builds are created from the source code in this repository.
 
 New scientific searches need internet access. Saved topics and the fictional demo work offline. Click **Quit PaperSift** on the page when finished: it stops the local server and closes the tab when your browser allows it. If the tab stays open, the page confirms shutdown and you can close it manually. Closing a browser tab alone does not stop the local server. Launching the package again while it is running reopens the same instance. The standalone app chooses a free `127.0.0.1` port automatically; the address can change each launch. If your browser does not open, see `address.txt` in the data folder below for the current address.
 
