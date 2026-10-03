@@ -56,7 +56,7 @@ class PackagingTests(unittest.TestCase):
                 patch("launcher.time.sleep"):
             get.return_value.__enter__.return_value.status = 200
             open_when_ready("http://127.0.0.1:54321/")
-            browser.assert_called_once_with("http://127.0.0.1:54321/")
+            browser.assert_called_once_with("http://127.0.0.1:54321/", new=2)
             browser.reset_mock()
             get.side_effect = OSError("Not ready")
             open_when_ready("http://127.0.0.1:54321/")

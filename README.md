@@ -21,7 +21,7 @@ Standalone downloads need **no Python, Git, pip, or terminal**. Once releases ar
 
 These student builds are not signed/notarized. Windows SmartScreen or macOS Gatekeeper may warn or block them. Only use a build whose source you trust; follow your operating system's normal security guidance. There is no signing or notarization service built into this project. A Mac build supports the architecture it was built for (Apple Silicon or Intel); test and label that before release.
 
-New scientific searches need internet access. Saved topics and the fictional demo work offline. Click **Quit PaperSift** on the page when finished: closing a browser tab alone does not stop the local server. Launching the package again while it is running reopens the same instance. The standalone app chooses a free `127.0.0.1` port automatically; the address can change each launch. If your browser does not open, see `address.txt` in the data folder below for the current address.
+New scientific searches need internet access. Saved topics and the fictional demo work offline. Click **Quit PaperSift** on the page when finished: it stops the local server and closes the tab when your browser allows it. If the tab stays open, the page confirms shutdown and you can close it manually. Closing a browser tab alone does not stop the local server. Launching the package again while it is running reopens the same instance. The standalone app chooses a free `127.0.0.1` port automatically; the address can change each launch. If your browser does not open, see `address.txt` in the data folder below for the current address.
 
 ## What PaperSift Does
 
@@ -215,6 +215,11 @@ macOS:
 ```
 
 The tests run offline and check extraction, conservative classification, PubMed parsing, errors, invalid input, and the demo. Also try a live search, a demo, and CSV export in your browser after making changes. macOS instructions use standard virtual-environment commands; they need testing on a Mac if you change setup behavior.
+
+Quit button browser-logic regression checks (requires Node.js for development only):
+```
+node --test tests/quit.test.cjs
+```
 
 ## Data source and privacy
 

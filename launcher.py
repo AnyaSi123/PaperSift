@@ -35,7 +35,7 @@ def open_when_ready(url):
         try:
             with urlopen(url, timeout=1) as response:
                 if response.status == 200:
-                    webbrowser.open(url)
+                    webbrowser.open(url, new=2)
                     return
         except OSError:
             time.sleep(0.1)

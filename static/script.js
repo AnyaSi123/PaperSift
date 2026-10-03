@@ -244,7 +244,11 @@ if (quitButton) quitButton.addEventListener("click", async () => {
     errorText.textContent = "Could not stop PaperSift. Please try again.";
     errorText.hidden = false;
     setBusy(false);
+    return;
   }
+  // Some browsers refuse to close manually opened tabs. Keep the stopped
+  // message visible in that case, without reporting shutdown as a failure.
+  try { window.close(); } catch (_) { /* The user can close the tab manually. */ }
 });
 
 function csvCell(value) {
