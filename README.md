@@ -1,6 +1,14 @@
 # PaperSift
 
-Explore both sides of scientific research. A small, local Flask project for a high-school research presentation.
+Explore both sides of scientific research.
+
+## What PaperSift Does
+
+Enter a research question to search up to 12 PubMed papers. Read titles, authors, abstracts, journal names, and links to the originals. Simple keyword rules place papers into supporting, conflicting, nuanced, or unclear groups. All four groups remain visible.
+
+PaperSift also finds sample-size phrases, p-values, confidence intervals, and study-type keywords. Missing information says **Not reported** or **Not identified**. Export the current results to CSV for a spreadsheet.
+
+This is a tool for exploring literature, not deciding which hypothesis is true. It has no AI model, accounts, database, paid API key, or cloud backend.
 
 ## Download PaperSift
 
@@ -13,7 +21,7 @@ Standalone downloads need **no Python, Git, pip, or terminal**. Once releases ar
 3. Open `PaperSift.exe` inside the `PaperSift` folder. Keep its `_internal` folder alongside it.
 4. Your default browser opens PaperSift, running locally on your computer.
 
-### macOS
+### macOS (WIP)
 
 1. Download `PaperSift-macOS.zip` from Releases.
 2. Extract it if necessary and move `PaperSift.app` to a convenient folder.
@@ -22,14 +30,6 @@ Standalone downloads need **no Python, Git, pip, or terminal**. Once releases ar
 These student builds are not signed/notarized. Windows SmartScreen or macOS Gatekeeper may warn or block them. Only use a build whose source you trust; follow your operating system's normal security guidance. There is no signing or notarization service built into this project. A Mac build supports the architecture it was built for (Apple Silicon or Intel); test and label that before release.
 
 New scientific searches need internet access. Saved topics and the fictional demo work offline. Click **Quit PaperSift** on the page when finished: it stops the local server and closes the tab when your browser allows it. If the tab stays open, the page confirms shutdown and you can close it manually. Closing a browser tab alone does not stop the local server. Launching the package again while it is running reopens the same instance. The standalone app chooses a free `127.0.0.1` port automatically; the address can change each launch. If your browser does not open, see `address.txt` in the data folder below for the current address.
-
-## What PaperSift Does
-
-Enter a research question to search up to 12 PubMed papers. Read titles, authors, abstracts, journal names, and links to the originals. Simple keyword rules place papers into supporting, conflicting, nuanced, or unclear groups. All four groups remain visible.
-
-PaperSift also finds sample-size phrases, p-values, confidence intervals, and study-type keywords. Missing information says **Not reported** or **Not identified**. Export the current results to CSV for a spreadsheet.
-
-This is a tool for exploring literature, not deciding which hypothesis is true. It has no AI model, accounts, database, paid API key, or cloud backend.
 
 ## Running From Source
 
