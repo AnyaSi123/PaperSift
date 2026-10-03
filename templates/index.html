@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PaperSift — Explore scientific research</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+<body>
+  <main>
+    <header>
+      <span class="project-label">A student research project</span>
+      <h1>Paper<span>Sift</span></h1>
+      <p class="subtitle">Explore both sides of scientific research.</p>
+      <p>Start with a question. Look for agreement, disagreement, and the details in between.</p>
+    </header>
+
+    <section class="search-panel" aria-label="Search for research">
+      <form id="search-form">
+        <label for="question">Your research question or hypothesis</label>
+        <textarea id="question" name="question" rows="2" minlength="5" maxlength="500" required
+          placeholder="Enter a research question or hypothesis..."></textarea>
+        <div class="search-actions">
+          <button type="submit" id="search-button">Search PubMed</button>
+          <button type="button" id="demo-button" class="secondary">Try offline demo</button>
+          <span class="small">Up to 12 papers · No API key needed</span>
+        </div>
+      </form>
+      <p class="example">Try: <button type="button" id="example-button" class="text-button">Does social media use increase depression in teenagers?</button></p>
+      <p class="small">Live search covers PubMed’s biomedical and health literature. Your question is converted to topic words and sent to NCBI.</p>
+    </section>
+
+    <p id="status" role="status" aria-live="polite">Enter a question above, or explore the offline sample.</p>
+    <p id="error" class="error" role="alert" hidden></p>
+
+    <section id="results" aria-label="Research results" hidden>
+      <div id="demo-notice" class="notice demo-notice" hidden><strong>Fictional sample data — not scientific evidence.</strong> These six made-up papers demonstrate the interface for one fixed question. Names, numbers, and findings are invented examples and must not be cited.</div>
+      <div class="results-heading">
+        <div><h2>Research results</h2><p id="result-question"></p></div>
+        <button id="export-button" type="button" class="secondary">Export CSV</button>
+      </div>
+      <p id="search-terms" class="small"></p>
+      <div id="summary" class="summary" aria-label="Paper counts"></div>
+      <div class="notice">
+        <strong>Provisional labels from keyword rules, not AI.</strong>
+        <p>The rules only understand simple “Does X increase/decrease Y?” questions and explicit results or conclusion sections. They do not assess causation, study quality, or whether the population matches. “Conflicting” can include a reported null result; this is not proof of no effect. Other papers stay unclear.</p>
+        <p>These are a small set of search results, not a systematic review. Paper counts do not tell you which side is correct. Statistics are text matches from abstracts; study types may come from PubMed metadata or abstract keywords.</p>
+      </div>
+      <div class="evidence-columns">
+        <section class="evidence-section supporting-section">
+          <h2>Supporting Evidence <span id="supporting-count" class="count"></span></h2>
+          <p class="column-note">Findings provisionally aligned with your hypothesis.</p>
+          <div id="supporting-papers" class="paper-list"></div>
+        </section>
+        <section class="evidence-section conflicting-section">
+          <h2>Conflicting / Nuanced Evidence <span id="other-count" class="count"></span></h2>
+          <p class="column-note">Findings that may challenge or qualify your hypothesis.</p>
+          <div id="other-papers" class="paper-list"></div>
+        </section>
+      </div>
+      <section class="unclear-section">
+        <h2>Unclear <span id="unclear-count" class="count"></span></h2>
+        <p class="column-note">Not enough information for the rules to place these papers. Review them yourself.</p>
+        <div id="unclear-papers" class="paper-list unclear-grid"></div>
+      </section>
+    </section>
+
+    <footer>PaperSift automatically extracts information from research abstracts. Results may be incomplete or incorrectly classified. Always review the original paper before drawing scientific conclusions.</footer>
+  </main>
+</body>
+</html>

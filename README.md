@@ -1,0 +1,139 @@
+# PaperSift
+
+Explore both sides of scientific research. A small, local Flask project for a high-school research presentation.
+
+## What PaperSift Does
+
+Enter a research question to search up to 12 PubMed papers. Read titles, authors, abstracts, journal names, and links to the originals. Simple keyword rules place papers into supporting, conflicting, nuanced, or unclear groups. All four groups remain visible.
+
+PaperSift also finds sample-size phrases, p-values, confidence intervals, and study-type keywords. Missing information says **Not reported** or **Not identified**. Export the current results to CSV for a spreadsheet.
+
+This is a tool for exploring literature, not deciding which hypothesis is true. It has no AI model, accounts, database, paid API key, or cloud backend.
+
+## Requirements
+
+- Python **3.10 or newer**. Get it from [python.org](https://www.python.org/downloads/). On Windows, select **Add Python to PATH** during installation.
+- An internet connection for installing dependencies and live searches. The demo works offline after installation.
+- A browser. Git is optional if you download the project as a ZIP.
+
+## Get the project
+
+Clone the repository using its actual URL (replace `YOUR_REPOSITORY_URL`):
+
+```text
+git clone YOUR_REPOSITORY_URL PaperSift
+cd PaperSift
+```
+
+Alternatively, download and unzip the repository, then open a terminal in the extracted PaperSift folder. It should contain `app.py` and `requirements.txt`.
+
+## Windows Setup
+
+Open PowerShell in the PaperSift folder and run these commands one line at a time:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe app.py
+```
+
+If `python` is not recognized but the Python launcher is installed, use `py -3 -m venv .venv` for the first command. We call the virtual environment's Python directly so you do not need to change PowerShell's script execution policy or activate anything.
+
+Open **http://localhost:5000** in your browser. Leave the terminal running. Press **Ctrl+C** there to stop the app.
+
+Next time, you only need:
+
+```powershell
+.\.venv\Scripts\python.exe app.py
+```
+
+## macOS Setup
+
+Open Terminal in the PaperSift folder and run:
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python app.py
+```
+
+Open **http://localhost:5000**. Leave Terminal running. Press **Ctrl+C** to stop.
+
+Next time, run `.venv/bin/python app.py` from the same folder.
+
+## Using PaperSift
+
+1. Enter a question, such as **Does social media use increase depression in teenagers?** The example below the input fills it for you.
+2. Click **Search PubMed**. A search may take several seconds.
+3. Check the actual search terms displayed above the results. Topic words are kept while common question and direction words are removed, so the search does not deliberately favor the hypothesis. Try shorter keywords if results are poor.
+4. Compare both columns and the **Unclear** section. Open **Full abstract & disclosures** to see all retrieved text, grant metadata, and disclosures.
+5. Follow **Read original on PubMed** to check the paper yourself. Access to its full text may depend on the publisher.
+6. Click **Export CSV** to download the current results. The export includes the question, source, heuristic label, extracted values, full abstract, and limitations. It opens in Excel and other spreadsheet programs.
+
+PubMed mainly covers biomedical and health research. It is not a search engine for every scientific field. We request relevance-ranked results, not a complete or balanced review. Citation counts are omitted because this API does not provide them directly. An empty group does not mean no evidence exists for that group.
+
+## Demo Mode
+
+Click **Try offline demo**. It loads six **obviously fictional sample papers** from `demo.json` for the fixed social-media/depression question. It never calls PubMed. Your input is not used for demo classification; the demo question is shown above the results.
+
+Every sample title, the page banner, and the exported CSV identify these as fictional. All sample authors and numerical findings are invented to demonstrate the software. **Do not cite them or treat them as scientific evidence.** Real live-search data is never replaced with samples automatically.
+
+## How the rules work (and where they fail)
+
+- `classify_paper(question, abstract)` in `analysis.py` is an ordinary Python function, **not AI**. It only understands simple increase/decrease/reduce questions. It looks for the same exposure and outcome words in explicitly labeled results or conclusion sections, then checks directional wording. A null association is provisionally conflicting; mixed or uncertain wording is nuanced. Other cases are unclear, including causal claims and unrecognized question phrasing.
+- Many real abstracts will be **unclear**. That is expected. The rules cannot reliably interpret negation, synonyms, multiple outcomes, population differences, or complex sentences. They cannot verify causation or evaluate the quality of evidence.
+- Regular expressions extract matching text from abstracts, including multiple matches. They may pick up subgroup sizes, references to other studies, or unrelated statistics. They do not tell you which outcome each statistic belongs to. A bare `95% CI` may be found without its bounds. Other formatting may be missed.
+- Study types are taken from recognized PubMed publication types first, then explicit abstract keywords. An abstract may mention a different study, so verify the label.
+- Funding is shown only when PubMed returns grant metadata; disclosures use PubMed's conflict-of-interest field. **Not reported means unavailable in the retrieved data, not absent from the full paper.**
+- Abstract excerpts are copied text, not generated summaries. No conclusions or citations are invented for live results.
+- A future LLM integration can replace `classify_paper` while keeping the same four return labels. It would still need careful validation and uncertainty handling. There is no LLM integration or key requirement in this version.
+
+## Files and presentation walkthrough
+
+```text
+app.py                 Flask page and search endpoint
+research.py            PubMed search and XML metadata parsing
+analysis.py            Statistics, study types, and classification rules
+demo.json              Six fictional offline examples
+templates/index.html   The page structure
+static/style.css       Styling and small-screen layout
+static/script.js       Search, paper cards, and CSV download
+tests/test_papersift.py Focused automated checks
+requirements.txt       Flask and requests
+```
+
+For a presentation: the browser sends a question to Flask → Flask asks PubMed for IDs and abstracts → Python extracts text and assigns provisional labels → JavaScript displays the cards. Export runs in the browser. The app does not save searches to disk.
+
+## Troubleshooting
+
+- **No papers found:** try fewer topic words or a health-related question. Long questions are not interpreted by a language model.
+- **PubMed unavailable or rate-limited:** wait a minute and retry, check Wi-Fi, or click the offline demo. The app spaces API calls and shows errors instead of silently substituting data.
+- **Cannot connect to localhost:** keep the server terminal open and check for errors. Also try `http://127.0.0.1:5000`.
+- **Port 5000 already in use:** choose 5001. In PowerShell run `$env:PORT="5001"`, then the normal start command. On macOS run `PORT=5001 .venv/bin/python app.py`. Open `http://localhost:5001`. macOS AirPlay Receiver sometimes uses port 5000.
+- **Missing Flask/requests:** install requirements with the same `.venv` Python used to start the app.
+
+## Checking changes
+
+Windows:
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+```
+
+macOS:
+
+```bash
+.venv/bin/python -m unittest discover -s tests -v
+```
+
+The tests run offline and check extraction, conservative classification, PubMed parsing, errors, invalid input, and the demo. Also try a live search, a demo, and CSV export in your browser after making changes. macOS instructions use standard virtual-environment commands; they need testing on a Mac if you change setup behavior.
+
+## Data source and privacy
+
+Live results come from [NCBI PubMed E-utilities](https://www.ncbi.nlm.nih.gov/books/NBK25499/), using ESearch and EFetch. NCBI's [usage guidance](https://www.nlm.nih.gov/dataguide/eutilities/utilities.html) allows at most three requests per second without an API key; this single-process app spaces calls by at least 0.4 seconds. Other apps on the same network can still affect rate limits.
+
+The app runs on your computer's loopback address. Live search terms are sent to NCBI. There are no analytics, accounts, or persistent search storage. Downloaded CSV files remain wherever your browser saves them. Abstracts may have publisher copyright restrictions: links and excerpts are for reviewing papers, not a license to redistribute a collection of abstracts.
+
+The included `.gitignore` excludes virtual environments, Python caches, environment files, and logs. No API keys are needed. Do not commit your `.venv` folder or secrets.
+
+PaperSift automatically extracts information from research abstracts. Results may be incomplete or incorrectly classified. Always review the original paper before drawing scientific conclusions.

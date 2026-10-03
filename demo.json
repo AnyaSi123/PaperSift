@@ -1,0 +1,53 @@
+{
+  "question": "Does social media use increase depression in teenagers?",
+  "papers": [
+    {
+      "title": "[FICTIONAL SAMPLE] Social media and depression: a school survey",
+      "authors": "Sample Author A (fictional)",
+      "year": "Not reported",
+      "venue": "Fictional classroom example — not published",
+      "abstract": "FICTIONAL SAMPLE: All information here is invented for a software demonstration. Methods: A cross-sectional study surveyed 245 participants. Results: Social media use was associated with higher depression scores in teenagers (p = 0.032; 95% CI: 0.10 to 0.80). This sample cannot establish causation.",
+      "publication_types": []
+    },
+    {
+      "title": "[FICTIONAL SAMPLE] Tracking social media habits across a school year",
+      "authors": "Sample Author B (fictional)",
+      "year": "Not reported",
+      "venue": "Fictional classroom example — not published",
+      "abstract": "FICTIONAL SAMPLE: All information here is invented. Methods: This cohort study included 1,200 students. Results: Social media use was associated with increased depression scores (p < 0.05). This is an illustrative association, not evidence of causation.",
+      "publication_types": []
+    },
+    {
+      "title": "[FICTIONAL SAMPLE] No clear association in a small survey",
+      "authors": "Sample Author C (fictional)",
+      "year": "Not reported",
+      "venue": "Fictional classroom example — not published",
+      "abstract": "FICTIONAL SAMPLE: All information here is invented. Methods: An observational study enrolled N = 180. Results: There was no significant association between social media use and depression (p = 0.42). A null result is not proof that an effect is absent.",
+      "publication_types": []
+    },
+    {
+      "title": "[FICTIONAL SAMPLE] Different patterns for different online activities",
+      "authors": "Sample Author D (fictional)",
+      "year": "Not reported",
+      "venue": "Fictional classroom example — not published",
+      "abstract": "FICTIONAL SAMPLE: All information here is invented. Methods: A cross-sectional study included 320 adolescents. Results: The association between social media use and depression was mixed and varied by activity. These invented findings illustrate why one label can miss important detail.",
+      "publication_types": []
+    },
+    {
+      "title": "[FICTIONAL SAMPLE] A protocol for studying online habits",
+      "authors": "Sample Author E (fictional)",
+      "year": "Not reported",
+      "venue": "Fictional classroom example — not published",
+      "abstract": "FICTIONAL SAMPLE: This invented protocol proposes investigating online habits and wellbeing. Recruitment has not started. No study findings or sample size are available.",
+      "publication_types": []
+    },
+    {
+      "title": "[FICTIONAL SAMPLE] A record with no abstract available",
+      "authors": "Sample Author F (fictional)",
+      "year": "Not reported",
+      "venue": "Fictional classroom example — not published",
+      "abstract": "",
+      "publication_types": []
+    }
+  ]
+}
