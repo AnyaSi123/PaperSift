@@ -10,6 +10,15 @@ header p { margin: 5px 0; color: var(--muted); }
 .subtitle { font-size: 1.25rem; color: var(--ink); }
 h2 { font-size: 1.15rem; margin: 0; line-height: 1.5; }
 .search-panel { background: white; border: 1px solid var(--line); border-radius: 10px; padding: 24px; box-shadow: 0 2px 6px #24324708; }
+.topics-panel { background: white; border: 1px solid var(--line); border-radius: 10px; padding: 18px 24px; margin-bottom: 20px; }
+.topics-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.topics-panel p { margin: 8px 0; }
+#topic-list { list-style: none; padding: 0; margin: 12px 0 0; max-height: 220px; overflow-y: auto; display: grid; gap: 8px; }
+.topic-row { display: flex; gap: 8px; align-items: center; }
+.topic-open { flex: 1; min-width: 0; text-align: left; background: #f7f9fb; color: var(--ink); border-color: var(--line); font-weight: 500; overflow-wrap: anywhere; }
+.topic-open[aria-current="true"] { border-color: var(--blue); background: #edf3fa; box-shadow: inset 3px 0 var(--blue); }
+.topic-date { display: block; font-size: .75rem; font-weight: 400; color: var(--muted); }
+.topic-delete { font-size: .8rem; padding: 6px 8px; background: white; border-color: var(--line); color: #8a3a2d; }
 label { display: block; font-weight: 650; margin-bottom: 8px; }
 textarea { display: block; width: 100%; padding: 13px; border: 1px solid #9aaabd; border-radius: 6px; resize: vertical; font: inherit; color: var(--ink); min-height: 90px; background: white; }
 button { border: 1px solid var(--blue); border-radius: 6px; padding: 10px 17px; background: var(--blue); color: white; font: inherit; font-weight: 600; cursor: pointer; }

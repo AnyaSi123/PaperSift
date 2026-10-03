@@ -5,6 +5,103 @@ const errorText = document.querySelector("#error");
 const results = document.querySelector("#results");
 const example = "Does social media use increase depression in teenagers?";
 let currentResults = null;
+let currentTopicId = null;
+let savedTopics = [];
+let busy = false;
+const topicsError = document.querySelector("#topics-error");
+
+function setBusy(value) {
+  busy = value;
+  document.querySelectorAll("#search-form button, #example-button, .topics-panel button")
+    .forEach(button => { button.disabled = value; });
+  questionInput.disabled = value;
+}
+
+function renderTopics() {
+  const list = document.querySelector("#topic-list");
+  list.replaceChildren();
+  document.querySelector("#topics-empty").textContent = savedTopics.length ? "" : "No saved topics yet. Search for papers to create one.";
+  for (const topic of savedTopics) {
+    const row = element("li", undefined, "topic-row");
+    const open = element("button", topic.title, "topic-open");
+    open.type = "button";
+    open.title = topic.query;
+    open.setAttribute("aria-current", String(topic.id === currentTopicId));
+    open.append(element("span", new Date(topic.created_at).toLocaleString(), "topic-date"));
+    open.addEventListener("click", () => openTopic(topic.id));
+    const remove = element("button", "Delete", "topic-delete");
+    remove.type = "button";
+    remove.setAttribute("aria-label", `Delete topic: ${topic.title}`);
+    remove.addEventListener("click", () => removeTopic(topic.id));
+    open.disabled = remove.disabled = busy;
+    row.append(open, remove);
+    list.append(row);
+  }
+}
+
+async function topicRequest(url, options) {
+  const response = await fetch(url, options);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "Could not access saved topics.");
+  return data;
+}
+
+async function refreshTopics() {
+  try {
+    const data = await topicRequest("/api/topics");
+    savedTopics = data.topics;
+    renderTopics();
+    topicsError.hidden = true;
+  } catch (error) {
+    topicsError.textContent = error.message;
+    topicsError.hidden = false;
+    document.querySelector("#topics-empty").textContent = "Saved topics are unavailable. You can still search.";
+  }
+}
+
+function newResearch() {
+  currentResults = null;
+  currentTopicId = null;
+  questionInput.value = "";
+  results.hidden = true;
+  errorText.hidden = true;
+  statusText.textContent = "Enter a question above, or explore the offline sample.";
+  renderTopics();
+  questionInput.focus();
+}
+
+async function openTopic(id) {
+  if (busy) return;
+  setBusy(true);
+  errorText.hidden = true;
+  try {
+    showResults(await topicRequest(`/api/topics/${encodeURIComponent(id)}`));
+    topicsError.hidden = true;
+  } catch (error) {
+    topicsError.textContent = error.message;
+    topicsError.hidden = false;
+  } finally {
+    setBusy(false);
+  }
+}
+
+async function removeTopic(id) {
+  if (busy) return;
+  setBusy(true);
+  try {
+    await topicRequest(`/api/topics/${encodeURIComponent(id)}`, { method: "DELETE" });
+    savedTopics = savedTopics.filter(topic => topic.id !== id);
+    if (id === currentTopicId) newResearch();
+    renderTopics();
+    topicsError.hidden = true;
+  } catch (error) {
+    topicsError.textContent = error.message;
+    topicsError.hidden = false;
+  } finally {
+    setBusy(false);
+    if (!currentTopicId) questionInput.focus();
+  }
+}
 
 function element(tag, text, className) {
   const node = document.createElement(tag);
@@ -51,6 +148,9 @@ function paperCard(paper, demo) {
 
 function showResults(data) {
   currentResults = data;
+  currentTopicId = data.topic_id || null;
+  questionInput.value = data.question;
+  renderTopics();
   results.hidden = false;
   document.querySelector("#demo-notice").hidden = !data.demo;
   document.querySelector("#result-question").textContent = data.question;
@@ -73,16 +173,17 @@ function showResults(data) {
   }
   document.querySelector("#export-button").disabled = !data.papers.length;
   statusText.textContent = data.papers.length
-    ? `${data.demo ? "Offline sample loaded" : "Search complete"}. ${data.papers.length} papers shown.`
+    ? `${data.restored ? "Saved topic restored — no new search" : data.demo ? "Offline sample loaded" : "Search complete"}. ${data.papers.length} papers shown.${data.topic_id ? " Saved locally." : " Results not saved."}`
     : "No papers found. Try fewer topic words, a different term, or a health-related question.";
 }
 
 async function search(demo) {
-  const buttons = document.querySelectorAll("#search-form button, #example-button");
-  buttons.forEach(button => { button.disabled = true; });
-  questionInput.disabled = true;
+  if (busy) return;
+  setBusy(true);
   results.hidden = true;
   currentResults = null;
+  currentTopicId = null;
+  renderTopics();
   errorText.hidden = true;
   statusText.textContent = demo ? "Loading offline sample…" : "Searching PubMed and reading abstracts…";
   results.setAttribute("aria-busy", "true");
@@ -97,6 +198,11 @@ async function search(demo) {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "The search could not be completed.");
     showResults(data);
+    await refreshTopics();
+    if (data.warning) {
+      topicsError.textContent = `Results were not saved. ${data.warning}`;
+      topicsError.hidden = false;
+    }
   } catch (error) {
     errorText.textContent = error.name === "AbortError"
       ? "The search took too long. Please try again or use the offline demo."
@@ -107,8 +213,7 @@ async function search(demo) {
     statusText.textContent = "Search unsuccessful.";
   } finally {
     clearTimeout(timeout);
-    buttons.forEach(button => { button.disabled = false; });
-    questionInput.disabled = false;
+    setBusy(false);
     results.setAttribute("aria-busy", "false");
   }
 }
@@ -122,6 +227,9 @@ document.querySelector("#example-button").addEventListener("click", () => {
   questionInput.value = example;
   questionInput.focus();
 });
+document.querySelector("#new-topic-button").addEventListener("click", newResearch);
+setBusy(true);
+refreshTopics().finally(() => setBusy(false));
 
 function csvCell(value) {
   let text = String(value ?? "");

@@ -72,6 +72,14 @@ Next time, run `.venv/bin/python app.py` from the same folder.
 
 PubMed mainly covers biomedical and health research. It is not a search engine for every scientific field. We request relevance-ranked results, not a complete or balanced review. Citation counts are omitted because this API does not provide them directly. An empty group does not mean no evidence exists for that group.
 
+## Research Topics
+
+Successful searches with papers are automatically saved in `data/history.json`, newest first. The folder and file are created as needed. Click a topic to restore its original question, papers, counts, and extracted information **without another PubMed request**. Repeating the same question (ignoring capitalization and extra whitespace) opens the saved topic. To collect fresh results for that question, delete its topic and search again.
+
+**New Research** clears the screen but keeps your topics. **Delete** removes only that topic; deleting the selected topic returns to a blank search. Demo topics are marked `[Demo]` and kept separate from live research. Failed searches and searches with no papers are not saved.
+
+Topics survive app restarts. No account or cloud database is required. History is a plain local JSON file and is ignored by Git; if your project folder is inside OneDrive or another synced folder, that service may sync it. The file uses safe replacement when saving. If it is malformed or cannot be written, PaperSift shows a message and keeps the original file. Move a damaged file aside or restore a valid backup to resume saving. Use one running PaperSift process per project folder; this simple file store is intended for personal use.
+
 ## Demo Mode
 
 Click **Try offline demo**. It loads six **obviously fictional sample papers** from `demo.json` for the fixed social-media/depression question. It never calls PubMed. Your input is not used for demo classification; the demo question is shown above the results.
@@ -94,15 +102,18 @@ Every sample title, the page banner, and the exported CSV identify these as fict
 app.py                 Flask page and search endpoint
 research.py            PubMed search and XML metadata parsing
 analysis.py            Statistics, study types, and classification rules
+history.py             Read, save, and delete local topic snapshots
+data/history.json      Your saved topics (created automatically; ignored by Git)
 demo.json              Six fictional offline examples
 templates/index.html   The page structure
 static/style.css       Styling and small-screen layout
 static/script.js       Search, paper cards, and CSV download
 tests/test_papersift.py Focused automated checks
+tests/test_topics.py    Topic persistence and error-handling checks
 requirements.txt       Flask and requests
 ```
 
-For a presentation: the browser sends a question to Flask → Flask asks PubMed for IDs and abstracts → Python extracts text and assigns provisional labels → JavaScript displays the cards. Export runs in the browser. The app does not save searches to disk.
+For a presentation: the browser sends a new question to Flask → Flask asks PubMed for IDs and abstracts → Python extracts text and assigns provisional labels → Flask saves a topic snapshot → JavaScript displays the cards. Opening an existing topic reads its saved snapshot. Export runs in the browser.
 
 ## Troubleshooting
 
@@ -132,7 +143,7 @@ The tests run offline and check extraction, conservative classification, PubMed 
 
 Live results come from [NCBI PubMed E-utilities](https://www.ncbi.nlm.nih.gov/books/NBK25499/), using ESearch and EFetch. NCBI's [usage guidance](https://www.nlm.nih.gov/dataguide/eutilities/utilities.html) allows at most three requests per second without an API key; this single-process app spaces calls by at least 0.4 seconds. Other apps on the same network can still affect rate limits.
 
-The app runs on your computer's loopback address. Live search terms are sent to NCBI. There are no analytics, accounts, or persistent search storage. Downloaded CSV files remain wherever your browser saves them. Abstracts may have publisher copyright restrictions: links and excerpts are for reviewing papers, not a license to redistribute a collection of abstracts.
+The app runs on your computer's loopback address. New live search terms are sent to NCBI. There are no analytics or accounts. Research topics and their results are stored in the local `data/history.json` file. Downloaded CSV files remain wherever your browser saves them. Abstracts may have publisher copyright restrictions: links and excerpts are for reviewing papers, not a license to redistribute a collection of abstracts.
 
 The included `.gitignore` excludes virtual environments, Python caches, environment files, and logs. No API keys are needed. Do not commit your `.venv` folder or secrets.
 

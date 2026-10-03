@@ -1,6 +1,8 @@
 """Run from the project folder: python -m unittest discover -s tests -v"""
 
 import unittest
+import tempfile
+from pathlib import Path
 from unittest.mock import patch
 
 import requests
@@ -91,6 +93,11 @@ class PubMedTests(unittest.TestCase):
 
 class AppTests(unittest.TestCase):
     def setUp(self):
+        folder = tempfile.TemporaryDirectory()
+        self.addCleanup(folder.cleanup)
+        config = patch.dict(app.config, HISTORY_PATH=Path(folder.name) / "history.json")
+        config.start()
+        self.addCleanup(config.stop)
         self.client = app.test_client()
 
     def test_page_and_offline_demo(self):

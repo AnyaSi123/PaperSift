@@ -8,14 +8,43 @@ from flask import Flask, jsonify, render_template, request
 
 from analysis import analyze_paper
 from research import SearchError, search_pubmed
+from history import HistoryError, delete_topic, find_topic, read_topics, save_topic
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 8_000
+app.config["HISTORY_PATH"] = Path(__file__).with_name("data") / "history.json"
 
 
 @app.get("/")
 def index():
     return render_template("index.html")
+
+
+@app.get("/api/topics")
+def topics():
+    saved = read_topics(app.config["HISTORY_PATH"])
+    return jsonify(topics=[{key: topic[key] for key in ("id", "title", "query", "created_at")}
+                           for topic in saved])
+
+
+@app.get("/api/topics/<topic_id>")
+def load_topic(topic_id):
+    topic = next((t for t in read_topics(app.config["HISTORY_PATH"]) if t["id"] == topic_id), None)
+    if topic is None:
+        return jsonify(error="This topic no longer exists."), 404
+    return jsonify(**topic["results"], topic_id=topic["id"], restored=True)
+
+
+@app.delete("/api/topics/<topic_id>")
+def remove_topic(topic_id):
+    if not delete_topic(app.config["HISTORY_PATH"], topic_id):
+        return jsonify(error="This topic no longer exists."), 404
+    return jsonify(deleted=topic_id)
+
+
+@app.errorhandler(HistoryError)
+def history_error(error):
+    return jsonify(error=str(error)), 503
 
 
 @app.post("/api/search")
@@ -33,7 +62,17 @@ def search():
         sample = json.loads(Path(__file__).with_name("demo.json").read_text(encoding="utf-8"))
         question, papers = sample["question"], sample["papers"]
         search_terms = "Offline sample — no PubMed search performed"
-    else:
+
+    # Reopening a duplicate preserves its original data and avoids a PubMed call.
+    warning = None
+    try:
+        existing = find_topic(app.config["HISTORY_PATH"], question, demo)
+        if existing:
+            return jsonify(**existing["results"], topic_id=existing["id"], restored=True)
+    except HistoryError as error:
+        warning = str(error)
+
+    if not demo:
         try:
             papers, search_terms = search_pubmed(question)
         except SearchError as error:
@@ -43,8 +82,17 @@ def search():
     counts = {label: 0 for label in ("supporting", "conflicting", "nuanced", "unclear")}
     for paper in papers:
         counts[paper["classification"]] += 1
-    return jsonify(question=question, papers=papers, counts=counts,
-                   demo=demo, search_terms=search_terms)
+    result = dict(question=question, papers=papers, counts=counts,
+                  demo=demo, search_terms=search_terms)
+    topic = None
+    if papers and not warning:
+        try:
+            topic = save_topic(app.config["HISTORY_PATH"], result)
+        except HistoryError as error:
+            warning = str(error)
+    if topic:
+        return jsonify(**topic["results"], topic_id=topic["id"], restored=False)
+    return jsonify(**result, topic_id=None, warning=warning)
 
 
 @app.errorhandler(413)

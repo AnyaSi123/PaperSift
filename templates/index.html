@@ -16,6 +16,17 @@
       <p>Start with a question. Look for agreement, disagreement, and the details in between.</p>
     </header>
 
+    <section class="topics-panel" aria-label="Research Topics">
+      <div class="topics-heading">
+        <h2>Research Topics</h2>
+        <button type="button" id="new-topic-button" class="secondary">New Research</button>
+      </div>
+      <p class="small">Saved on this computer. Open a topic to return to its saved papers.</p>
+      <p id="topics-error" class="error" role="alert" hidden></p>
+      <ul id="topic-list" aria-label="Saved topics"></ul>
+      <p id="topics-empty" class="small">Loading saved topics…</p>
+    </section>
+
     <section class="search-panel" aria-label="Search for research">
       <form id="search-form">
         <label for="question">Your research question or hypothesis</label>
