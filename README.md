@@ -12,7 +12,7 @@ This is a tool for exploring literature, not deciding which hypothesis is true. 
 
 ## Download PaperSift
 
-Standalone downloads need **no Python, Git, pip, or terminal**. Once releases are published, get the ZIP for your operating system from this repository's GitHub **Releases** page. No release has been published by these build scripts.
+Standalone downloads need **no Python, Git, pip, or terminal**. Get the ZIP for your operating system (for now only Windows is available) from this repository's GitHub **Releases** page.
 
 ### Windows
 
