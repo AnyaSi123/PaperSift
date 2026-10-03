@@ -71,7 +71,7 @@ def read_topics(path):
         except FileNotFoundError:
             return []
         except (ValueError, KeyError, TypeError, UnicodeError) as error:
-            raise HistoryError("Saved topics could not be read. Your history file was left unchanged. Move data/history.json aside to start fresh, or restore a valid backup.") from error
+            raise HistoryError(f"Saved topics could not be read. Your history file was left unchanged. Move {path} aside to start fresh, or restore a valid backup.") from error
         except OSError as error:
             raise HistoryError("Cannot access saved topics. Check that the data folder is readable and writable.") from error
 

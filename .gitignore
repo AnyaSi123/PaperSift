@@ -10,3 +10,7 @@ __pycache__/
 Thumbs.db
 *.log
 data/
+build/
+dist/
+*.exe
+*.app/

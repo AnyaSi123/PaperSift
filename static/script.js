@@ -12,7 +12,7 @@ const topicsError = document.querySelector("#topics-error");
 
 function setBusy(value) {
   busy = value;
-  document.querySelectorAll("#search-form button, #example-button, .topics-panel button")
+  document.querySelectorAll("#search-form button, #example-button, .topics-panel button, #quit-button")
     .forEach(button => { button.disabled = value; });
   questionInput.disabled = value;
 }
@@ -29,8 +29,9 @@ function renderTopics() {
     open.setAttribute("aria-current", String(topic.id === currentTopicId));
     open.append(element("span", new Date(topic.created_at).toLocaleString(), "topic-date"));
     open.addEventListener("click", () => openTopic(topic.id));
-    const remove = element("button", "Delete", "topic-delete");
+    const remove = element("button", "×", "topic-delete");
     remove.type = "button";
+    remove.title = "Delete topic";
     remove.setAttribute("aria-label", `Delete topic: ${topic.title}`);
     remove.addEventListener("click", () => removeTopic(topic.id));
     open.disabled = remove.disabled = busy;
@@ -207,7 +208,7 @@ async function search(demo) {
     errorText.textContent = error.name === "AbortError"
       ? "The search took too long. Please try again or use the offline demo."
       : error.message === "Failed to fetch"
-        ? "Cannot reach PaperSift. Make sure python app.py is still running."
+        ? "Cannot reach PaperSift. Open PaperSift again, or restart your source server."
         : error.message;
     errorText.hidden = false;
     statusText.textContent = "Search unsuccessful.";
@@ -230,6 +231,21 @@ document.querySelector("#example-button").addEventListener("click", () => {
 document.querySelector("#new-topic-button").addEventListener("click", newResearch);
 setBusy(true);
 refreshTopics().finally(() => setBusy(false));
+
+const quitButton = document.querySelector("#quit-button");
+if (quitButton) quitButton.addEventListener("click", async () => {
+  setBusy(true);
+  try {
+    await topicRequest("/api/quit", { method: "POST", headers: { "X-PaperSift-Quit": quitButton.dataset.token } });
+    results.hidden = true;
+    statusText.textContent = "PaperSift has stopped. Your saved topics are kept. You can close this tab.";
+    document.querySelector("#export-button").disabled = true;
+  } catch (error) {
+    errorText.textContent = "Could not stop PaperSift. Please try again.";
+    errorText.hidden = false;
+    setBusy(false);
+  }
+});
 
 function csvCell(value) {
   let text = String(value ?? "");

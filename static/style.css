@@ -1,7 +1,7 @@
 :root { color-scheme: light; --blue: #24599a; --ink: #253246; --muted: #596579; --line: #dce2e9; }
 * { box-sizing: border-box; }
 body { margin: 0; background: #f5f7fa; color: var(--ink); font: 16px/1.6 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-main { max-width: 1140px; margin: 0 auto; padding: 40px 24px 24px; }
+main { max-width: 1440px; margin: 0 auto; padding: 40px 24px 24px; }
 header { margin-bottom: 28px; }
 .project-label { font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 h1 { font-size: 2.7rem; letter-spacing: -.06em; line-height: 1.2; margin: 8px 0; }
@@ -75,4 +75,27 @@ footer { margin-top: 44px; padding-top: 20px; border-top: 1px solid var(--line);
   .evidence-columns, .unclear-grid { grid-template-columns: 1fr; }
   .results-heading { align-items: flex-start; flex-direction: column; }
   .search-actions .small { width: 100%; }
+}
+
+/* Research topics stay beside the workspace and scroll independently. */
+.workspace { display: grid; grid-template-columns: 250px minmax(0, 1fr); align-items: start; gap: 24px; }
+.research-content { min-width: 0; }
+#quit-button { margin-top: 12px; padding: 5px 12px; font-size: .85rem; }
+.topics-panel { padding: 16px; margin-bottom: 0; position: sticky; top: 20px; max-height: calc(100vh - 40px); display: flex; flex-direction: column; min-height: 0; }
+.topics-heading { display: grid; gap: 12px; flex-shrink: 0; }
+#topic-list { max-height: 420px; min-height: 0; gap: 6px; overflow-y: auto; overscroll-behavior: contain; flex-shrink: 1; }
+.topic-row { gap: 3px; }
+.topic-open { font-size: .83rem; line-height: 1.45; padding: 8px; background: transparent; border-color: transparent; }
+.topic-open[aria-current="true"] { border-color: var(--blue); background: #edf3fa; }
+.topic-delete { flex: 0 0 28px; height: 30px; font-size: 1.2rem; line-height: 1; padding: 0; background: transparent; border-color: transparent; color: var(--muted); }
+.topic-delete:hover { color: #8a3a2d; background: #fff0ec; }
+#topics-error { max-height: 150px; overflow-y: auto; flex-shrink: 0; overflow-wrap: anywhere; }
+@media (max-width: 1000px) {
+  .evidence-columns, .unclear-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .workspace { grid-template-columns: 1fr; gap: 16px; }
+  .topics-panel { position: static; max-height: 300px; padding: 14px; }
+  .topics-heading { display: flex; justify-content: space-between; align-items: center; }
+  #topic-list { max-height: 160px; }
 }

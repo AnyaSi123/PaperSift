@@ -14,9 +14,13 @@
       <h1>Paper<span>Sift</span></h1>
       <p class="subtitle">Explore both sides of scientific research.</p>
       <p>Start with a question. Look for agreement, disagreement, and the details in between.</p>
+      {% if quit_token %}
+      <button id="quit-button" class="secondary" type="button" data-token="{{ quit_token }}">Quit PaperSift</button>
+      {% endif %}
     </header>
 
-    <section class="topics-panel" aria-label="Research Topics">
+    <div class="workspace">
+    <aside class="topics-panel" aria-label="Research Topics">
       <div class="topics-heading">
         <h2>Research Topics</h2>
         <button type="button" id="new-topic-button" class="secondary">New Research</button>
@@ -25,8 +29,9 @@
       <p id="topics-error" class="error" role="alert" hidden></p>
       <ul id="topic-list" aria-label="Saved topics"></ul>
       <p id="topics-empty" class="small">Loading saved topics…</p>
-    </section>
+    </aside>
 
+    <div class="research-content">
     <section class="search-panel" aria-label="Search for research">
       <form id="search-form">
         <label for="question">Your research question or hypothesis</label>
@@ -78,6 +83,8 @@
     </section>
 
     <footer>PaperSift automatically extracts information from research abstracts. Results may be incomplete or incorrectly classified. Always review the original paper before drawing scientific conclusions.</footer>
+    </div>
+    </div>
   </main>
 </body>
 </html>

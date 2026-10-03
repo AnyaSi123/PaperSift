@@ -2,22 +2,38 @@
 
 import json
 import os
-from pathlib import Path
+import secrets
+import threading
 
 from flask import Flask, jsonify, render_template, request
 
 from analysis import analyze_paper
 from research import SearchError, search_pubmed
 from history import HistoryError, delete_topic, find_topic, read_topics, save_topic
+from paths import RESOURCE_DIR, history_path
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder=str(RESOURCE_DIR / "templates"),
+            static_folder=str(RESOURCE_DIR / "static"))
 app.config["MAX_CONTENT_LENGTH"] = 8_000
-app.config["HISTORY_PATH"] = Path(__file__).with_name("data") / "history.json"
+app.config["HISTORY_PATH"] = history_path()
 
 
 @app.get("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", quit_token=app.config.get("QUIT_TOKEN"))
+
+
+@app.post("/api/quit")
+def quit_app():
+    # Only the standalone launcher provides this callback and per-run token.
+    shutdown = app.config.get("SHUTDOWN")
+    if shutdown is None:
+        return jsonify(error="Stop the source server with Ctrl+C in its terminal."), 404
+    token = request.headers.get("X-PaperSift-Quit", "")
+    if not secrets.compare_digest(token, app.config["QUIT_TOKEN"]):
+        return jsonify(error="Please use the Quit button in PaperSift."), 403
+    threading.Thread(target=shutdown, daemon=True).start()
+    return jsonify(stopped=True)
 
 
 @app.get("/api/topics")
@@ -59,7 +75,7 @@ def search():
     question = question.strip()
 
     if demo:
-        sample = json.loads(Path(__file__).with_name("demo.json").read_text(encoding="utf-8"))
+        sample = json.loads((RESOURCE_DIR / "demo.json").read_text(encoding="utf-8"))
         question, papers = sample["question"], sample["papers"]
         search_terms = "Offline sample — no PubMed search performed"
 
